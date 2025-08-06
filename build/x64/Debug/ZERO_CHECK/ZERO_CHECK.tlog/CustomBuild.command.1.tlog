@@ -1,0 +1,10 @@
+^C:\USERS\ADITI\DOCUMENTS\GPU-RTX\BUILD\CMAKEFILES\4DB61FDC4E082E39ECE8118235D210C9\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Aditi/Documents/GPU-RTX -BC:/Users/Aditi/Documents/GPU-RTX/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/Aditi/Documents/GPU-RTX/build/GPU_RTX.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
