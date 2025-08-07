@@ -13,6 +13,7 @@
 #define CUDA_HOSTDEV
 #endif
 
+
 class Camera {
 public:
     Point3 origin;
@@ -22,7 +23,6 @@ public:
     Vec3 forward, right, up;
     float fov = 45.0f;
     float aspect_ratio;
-
 
     CUDA_HOSTDEV
     Camera(Point3 lookFrom, Point3 lookAt, Vec3 upVec, float vfov, float aspect)
@@ -42,26 +42,6 @@ public:
         vertical = viewport_height * up;
         lower_left_corner = origin - horizontal / 2.0f - vertical / 2.0f + forward;
     }
-
-
-
-    /*
-    // Constructor — sets up a fixed camera at (0, 0, 0) looking in -Z direction
-    CUDA_HOSTDEV
-    Camera(float aspect_ratio) {
-        float viewport_height = 2.0f;
-        float viewport_width = aspect_ratio * viewport_height;
-        float focal_length = 1.0f;
-
-        origin = Point3(0.0f, 0.0f, 0.0f);
-        horizontal = Vec3(viewport_width, 0.0f, 0.0f);
-        vertical = Vec3(0.0f, viewport_height, 0.0f);
-        lower_left_corner = origin 
-                            - horizontal / 2.0f 
-                            - vertical / 2.0f 
-                            - Vec3(0.0f, 0.0f, focal_length);
-    }
-    */
 
     // Returns a ray from the camera through image-space coordinates (u, v)
     CUDA_HOSTDEV
