@@ -6,6 +6,7 @@
 #include <cmath>
 #include <iostream>
 
+
 class Vec3 {
 public:
     float x, y, z;
@@ -102,22 +103,5 @@ using Point3 = Vec3;
 __host__ __device__ inline Vec3 operator*(float t, const Vec3& v) {
     return Vec3(t * v.x, t * v.y, t * v.z);
 }
-
-
-// // Component-wise Vec3 * Vec3
-// __host__ __device__ inline Vec3 operator*(const Vec3& a, const Vec3& b) {
-//     return Vec3(a.x * b.x, a.y * b.y, a.z * b.z);
-// }
-
-// // Clamp each component of Vec3 between min_val and max_val
-// __host__ __device__ inline Vec3 clamp(const Vec3& v, float min_val, float max_val) {
-//     return Vec3(
-//         fminf(fmaxf(v.x, min_val), max_val),
-//         fminf(fmaxf(v.y, min_val), max_val),
-//         fminf(fmaxf(v.z, min_val), max_val)
-//     );
-// }
-
-
 
 #endif // VEC3_H
