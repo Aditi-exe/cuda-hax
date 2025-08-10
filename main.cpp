@@ -23,8 +23,14 @@ int screenheight = 600;
 int WIDTH;
 int HEIGHT;
 
-int imagewidth, imageheight, channels;
-unsigned char* imagedata = stbi_load("earth.jpg", &imagewidth, &imageheight, &channels, 3);
+int imagewidth_sun;
+int imageheight_sun;
+int channels_sun;
+unsigned char* d_imagedata_sun;
+int imagewidth_earth;
+int imageheight_earth;
+int channels_earth;
+unsigned char* d_imagedata_earth;
 
 GLuint pbo = 0;
 struct cudaGraphicsResource *cuda_pbo_resource;
@@ -135,7 +141,7 @@ void render()
     cudaGraphicsMapResources(1, &cuda_pbo_resource, 0);
     cudaGraphicsResourceGetMappedPointer((void **)&dev_ptr, &size, cuda_pbo_resource);
 
-    launch_render(dev_ptr, WIDTH, HEIGHT, cam);
+    launch_render(dev_ptr, WIDTH, HEIGHT, cam, d_imagedata_sun, imagewidth_sun, imageheight_sun, d_imagedata_earth, imagewidth_earth, imageheight_earth);
 
     cudaGraphicsUnmapResources(1, &cuda_pbo_resource, 0);
 
@@ -161,6 +167,32 @@ int main()
         std::cerr << "GLFW init failed\n";
         return -1;
     }
+
+    unsigned char* h_imagedata_sun = stbi_load("external/stb-master/textures/8k_sun.jpg", &imagewidth_sun, &imageheight_sun, &channels_sun, STBI_rgb);
+    unsigned char* h_imagedata_earth = stbi_load("external/stb-master/textures/8k_earth_daymap.jpg", &imagewidth_earth, &imageheight_earth, &channels_earth, STBI_rgb);
+
+    std::cout << "Texture loaded successfully: width=" << imagewidth_sun << ", height=" << imageheight_sun << ", channels=" << channels_sun << std::endl;
+    if (!h_imagedata_sun || !h_imagedata_earth) {
+        std::cerr << "Failed to load texture\n" << std::endl;
+        return -1;
+    }
+    
+    // Loading Sun texture
+    size_t imagesize_sun = imagewidth_sun * imageheight_sun * 3;
+    cudaMalloc(&d_imagedata_sun, imagesize_sun);
+    cudaMemcpy(d_imagedata_sun, h_imagedata_sun, imagesize_sun, cudaMemcpyHostToDevice);
+    // cudaError_t err = cudaMemcpy(d_imagedata_sun, h_imagedata_sun, imagesize_sun, cudaMemcpyHostToDevice);
+    // if (err != cudaSuccess) {
+    //     std::cerr << "cudaMemcpy failed: " << cudaGetErrorString(err) << std::endl;
+    // }
+    // Loading Earth texture
+    size_t imagesize_earth = imagewidth_earth * imageheight_earth * 3;
+    cudaMalloc(&d_imagedata_earth, imagesize_earth);
+    cudaMemcpy(d_imagedata_earth, h_imagedata_earth, imagesize_earth, cudaMemcpyHostToDevice);
+    // cudaError_t err = cudaMemcpy(d_imagedata_earth, h_imagedata_earth, imagesize_earth, cudaMemcpyHostToDevice);
+    // if (err != cudaSuccess) {
+    //     std::cerr << "cudaMemcpy failed: " << cudaGetErrorString(err) << std::endl;
+    // }
 
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     screenwidth = mode->width;
@@ -210,7 +242,10 @@ int main()
         cudaGraphicsUnregisterResource(cuda_pbo_resource);
 
     glDeleteBuffers(1, &pbo);
-    stbi_image_free(imagedata);
+    cudaFree(d_imagedata_sun);
+    cudaFree(d_imagedata_earth);
+    stbi_image_free(h_imagedata_sun);
+    stbi_image_free(h_imagedata_earth);
     glfwTerminate();
     return 0;
 }
