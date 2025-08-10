@@ -145,10 +145,11 @@ void render()
 
     cudaGraphicsUnmapResources(1, &cuda_pbo_resource, 0);
 
-    std::cout << "Camera Position: "
-          << cam_position.x << ", "
-          << cam_position.y << ", "
-          << cam_position.z << std::endl;
+    // Left in for debugging; DO NOT REMOVE.
+    // std::cout << "Camera Position: "
+    //       << cam_position.x << ", "
+    //       << cam_position.y << ", "
+    //       << cam_position.z << std::endl;
 }
 
 // === Drawing to Screen ===
@@ -180,19 +181,18 @@ int main()
     // Loading Sun texture
     size_t imagesize_sun = imagewidth_sun * imageheight_sun * 3;
     cudaMalloc(&d_imagedata_sun, imagesize_sun);
-    cudaMemcpy(d_imagedata_sun, h_imagedata_sun, imagesize_sun, cudaMemcpyHostToDevice);
-    // cudaError_t err = cudaMemcpy(d_imagedata_sun, h_imagedata_sun, imagesize_sun, cudaMemcpyHostToDevice);
-    // if (err != cudaSuccess) {
-    //     std::cerr << "cudaMemcpy failed: " << cudaGetErrorString(err) << std::endl;
-    // }
+    cudaError_t err_sun = cudaMemcpy(d_imagedata_sun, h_imagedata_sun, imagesize_sun, cudaMemcpyHostToDevice);
+    if (err_sun != cudaSuccess) {
+        std::cerr << "cudaMemcpy failed: " << cudaGetErrorString(err_sun) << std::endl;
+    }
+    
     // Loading Earth texture
     size_t imagesize_earth = imagewidth_earth * imageheight_earth * 3;
     cudaMalloc(&d_imagedata_earth, imagesize_earth);
-    cudaMemcpy(d_imagedata_earth, h_imagedata_earth, imagesize_earth, cudaMemcpyHostToDevice);
-    // cudaError_t err = cudaMemcpy(d_imagedata_earth, h_imagedata_earth, imagesize_earth, cudaMemcpyHostToDevice);
-    // if (err != cudaSuccess) {
-    //     std::cerr << "cudaMemcpy failed: " << cudaGetErrorString(err) << std::endl;
-    // }
+    cudaError_t err_earth = cudaMemcpy(d_imagedata_earth, h_imagedata_earth, imagesize_earth, cudaMemcpyHostToDevice);
+    if (err_earth != cudaSuccess) {
+        std::cerr << "cudaMemcpy failed: " << cudaGetErrorString(err_earth) << std::endl;
+    }
 
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
     screenwidth = mode->width;
