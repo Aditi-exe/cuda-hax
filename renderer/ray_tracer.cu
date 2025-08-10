@@ -7,10 +7,6 @@
 #define PI 3.1415926535f
 
 
-// __device__ unsigned char* d_imagedata;
-// __device__ int imagewidth;
-// __device__ int imageheight;
-
 // Sample texture color at UV
 __device__ Vec3 sampleTexture(unsigned char* d_imagedata, int imagewidth, int imageheight, float u, float v) {
     int i = min(int((1.0f - u) * imagewidth), imagewidth - 1); // flipped u to NOT flip texture by 180 degrees sideways
@@ -27,8 +23,8 @@ __device__ Vec3 sampleTexture(unsigned char* d_imagedata, int imagewidth, int im
 __device__ Vec3 ray_color(const Ray &r, unsigned char* d_imagedata_sun, int imagewidth_sun, int imageheight_sun,
                                         unsigned char* d_imagedata_earth, int imagewidth_earth, int imageheight_earth)
 {
-    Sphere sphere1(Point3(-1.5f, 0.0f, -3.0f), 0.8f);
-    Sphere sphere2(Point3(1.5f, 0.0f, -4.0f), 0.2f);  // New sphere to the right
+    Sphere sphere1(Point3(-1.5f, 0.0f, -3.0f), 0.8f); // Sun sphere
+    Sphere sphere2(Point3(1.5f, 0.0f, -4.0f), 0.2f);  // Earth sphere
 
     float t1_hit, t2_hit;
     bool hit1 = sphere1.hit(r, 0.001f, FLT_MAX, t1_hit);
@@ -108,6 +104,7 @@ void launch_render(uint8_t *frameBuffer, int width, int height, const Camera& ca
     }
     
     cudaDeviceSynchronize();
+    
     err = cudaGetLastError();
     if (err != cudaSuccess) {
         std::cerr << "CUDA kernel execution error: " << cudaGetErrorString(err) << std::endl;
