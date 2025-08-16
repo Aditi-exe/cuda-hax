@@ -87,6 +87,11 @@ public:
         );
     }
 
+    __host__ __device__
+    Vec3 operator*(const Vec3& v) const {
+        return Vec3(x * v.x, y * v.y, z * v.z);
+    }
+
     __host__ __device__ Vec3 clamp(const Vec3& v, float min_val, float max_val) {
         return Vec3(
             fminf(fmaxf(v.x, min_val), max_val),
