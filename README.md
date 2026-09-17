@@ -1,4 +1,4 @@
-# Custom Ray Tracer using CUDE + OpenGL
+# Custom Ray Tracer using CUDA + OpenGL
 Graphics - Nvidia RTX 4070 Laptop GPU
 
 <img width="1910" height="1072" alt="image" src="https://github.com/user-attachments/assets/34dedc30-f25e-4d16-835a-397bbc2b5ede" />
